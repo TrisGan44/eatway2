@@ -1,0 +1,59 @@
+﻿@font-face {
+  font-family: 'Chunko';
+  src: url('./assets/fonts/Chunko-Bold.ttf') format('truetype'),
+    url('./assets/fonts/Chunko-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  font-family: 'Poppins', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #2b1717;
+  background-color: #f9f2ed;
+  line-height: 1.4;
+  font-weight: 400;
+  --primary: #721e1e;
+  --primary-dark: #500f0f;
+  --accent-solid: #ffcc33;
+  --accent-soft: rgba(255, 204, 51, 0.1);
+  --neutral-100: #ffffff;
+  --neutral-150: #fefbf8;
+  --neutral-200: #f7f2ed;
+  --neutral-300: #ede2da;
+  --neutral-500: #807070;
+  --danger: #c64343;
+  --logout: #c64343;
+  --border-radius: 20px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #f3e5d8;
+  color: #2b1717;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+#root {
+  min-height: 100vh;
+}
