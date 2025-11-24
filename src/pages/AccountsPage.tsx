@@ -5,6 +5,7 @@ import DataTable from '../components/common/DataTable'
 import PageHeading from '../components/common/PageHeading'
 import { deleteUser, getUsers } from '../api/users'
 import { systemIcons } from '../data/mock'
+import { useOutletContext } from 'react-router-dom'
 
 interface ApiUser {
   user_id: number
@@ -19,6 +20,8 @@ interface ApiUser {
 export default function AccountsPage() {
   const navigate = useNavigate()
   const [users, setUsers] = useState<ApiUser[]>([])
+  const outletContext = useOutletContext<{ search?: string }>()
+  const search = outletContext?.search ?? ''
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -50,6 +53,15 @@ export default function AccountsPage() {
       setError(err instanceof Error ? err.message : 'Gagal menghapus akun')
     }
   }
+
+  const filtered = users.filter((u) => {
+    const term = search.toLowerCase()
+    return (
+      u.username?.toLowerCase().includes(term) ||
+      u.email?.toLowerCase().includes(term) ||
+      u.role?.toLowerCase().includes(term)
+    )
+  })
 
   const columns = useMemo(
     () => [
@@ -92,8 +104,8 @@ export default function AccountsPage() {
       />
       <h3>Tabel Akun</h3>
       {error && <p className="form-error">{error}</p>}
-      {loading ? <p>Memuat data...</p> : <DataTable columns={columns} rows={users} zebra />}
-      {!loading && users.length === 0 && <p>Tidak ada data akun.</p>}
+      {loading ? <p>Memuat data...</p> : <DataTable columns={columns} rows={filtered} zebra />}
+      {!loading && filtered.length === 0 && <p>Tidak ada data akun.</p>}
     </div>
   )
 }

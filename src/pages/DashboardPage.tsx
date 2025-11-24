@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import Button from '../components/common/Button'
 import DataTable from '../components/common/DataTable'
 import StatCard from '../components/common/StatCard'
 import { getProducts } from '../api/produk'
+import { getOrders } from '../api/pesanan'
+import { getUsers } from '../api/users'
 import { dashboardOverview, systemIcons } from '../data/mock'
 
 interface ApiProduct {
@@ -16,17 +19,46 @@ interface ApiProduct {
 }
 
 export default function DashboardPage() {
+  const navigate = useNavigate()
   const [products, setProducts] = useState<ApiProduct[]>([])
+  const [stats, setStats] = useState(dashboardOverview)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const todayLabel = useMemo(
+    () =>
+      new Date().toLocaleDateString('id-ID', {
+        weekday: 'long',
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+      }),
+    [],
+  )
 
   const loadProducts = async () => {
     setLoading(true)
     setError(null)
     try {
-      const res = await getProducts()
-      const rows = Array.isArray(res?.data) ? res.data : Array.isArray(res) ? res : []
-      setProducts(rows)
+      const [productsRes, usersRes, ordersRes] = await Promise.all([getProducts(), getUsers(), getOrders()])
+
+      const productRows = Array.isArray(productsRes?.data) ? productsRes.data : Array.isArray(productsRes) ? productsRes : []
+      const userRows = Array.isArray(usersRes?.data) ? usersRes.data : Array.isArray(usersRes) ? usersRes : []
+      const orderRows = Array.isArray(ordersRes?.data) ? ordersRes.data : Array.isArray(ordersRes) ? ordersRes : []
+
+      setProducts(productRows)
+
+      const productsCount = productRows.length || 0
+      const usersCount = userRows.length || 0
+      const ordersCount = orderRows.length || 0
+
+      setStats(
+        dashboardOverview.map((card) => {
+          if (card.id === 'products') return { ...card, value: String(productsCount) }
+          if (card.id === 'accounts') return { ...card, value: String(usersCount) }
+          if (card.id === 'orders') return { ...card, value: String(ordersCount) }
+          return card
+        }),
+      )
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Gagal memuat produk')
     } finally {
@@ -50,16 +82,6 @@ export default function DashboardPage() {
         key: 'image_url',
         render: (row: ApiProduct) => row.image_url || '-',
       },
-      {
-        label: 'Aksi',
-        key: 'actions',
-        render: () => (
-          <div className="table-actions">
-            <img src={systemIcons.view} alt="View" />
-            <img src={systemIcons.edit} alt="Edit" />
-          </div>
-        ),
-      },
     ],
     [],
   )
@@ -69,8 +91,8 @@ export default function DashboardPage() {
       <div className="dashboard-page__header">
         <div>
           <p className="dashboard-page__eyebrow">
-            <span>Monday</span>
-            <span>24 Nov 2025</span>
+            <span>{todayLabel.split(' ')[0]}</span>
+            <span>{todayLabel.replace(todayLabel.split(' ')[0] + ' ', '')}</span>
           </p>
           <h1>Dashboard</h1>
         </div>
@@ -88,7 +110,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="dashboard-stats">
-        {dashboardOverview.map((item) => (
+        {stats.map((item) => (
           <StatCard key={item.id} item={item} />
         ))}
       </div>
@@ -99,7 +121,9 @@ export default function DashboardPage() {
             <h3>Tabel Produk</h3>
             <p>Data produk terbaru yang terdaftar</p>
           </div>
-          <Button variant="ghost">Lihat Semua</Button>
+          <Button variant="ghost" onClick={() => navigate('/products')}>
+            Lihat Semua
+          </Button>
         </div>
         {error && <p className="form-error">{error}</p>}
         {loading ? (

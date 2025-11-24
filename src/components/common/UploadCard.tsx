@@ -1,16 +1,43 @@
-﻿interface UploadCardProps {
+import { useRef } from 'react'
+
+interface UploadCardProps {
   title?: string
   highlightLabel?: string
   description?: string
+  onFileSelect?: (file: File) => void
 }
 
 export default function UploadCard({
   title = 'Profil User',
   highlightLabel = 'Click here',
   description = 'to upload or drop files here',
+  onFileSelect,
 }: UploadCardProps) {
+  const inputRef = useRef<HTMLInputElement | null>(null)
+
+  const handleFiles = (files: FileList | null) => {
+    if (files && files[0] && onFileSelect) {
+      onFileSelect(files[0])
+    }
+  }
+
   return (
-    <div className="upload-card">
+    <div
+      className="upload-card"
+      onClick={() => inputRef.current?.click()}
+      onDragOver={(e) => e.preventDefault()}
+      onDrop={(e) => {
+        e.preventDefault()
+        handleFiles(e.dataTransfer.files)
+      }}
+    >
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        style={{ display: 'none' }}
+        onChange={(e) => handleFiles(e.target.files)}
+      />
       <div className="upload-card__body">
         <div className="upload-card__dropzone">
           <svg

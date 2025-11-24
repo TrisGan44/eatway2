@@ -5,6 +5,7 @@ import DataTable from '../components/common/DataTable'
 import PageHeading from '../components/common/PageHeading'
 import { deleteProduct, getProducts } from '../api/produk'
 import { systemIcons } from '../data/mock'
+import { useOutletContext } from 'react-router-dom'
 
 interface ApiProduct {
   produk_id: number
@@ -18,6 +19,8 @@ interface ApiProduct {
 export default function ProductsPage() {
   const navigate = useNavigate()
   const [products, setProducts] = useState<ApiProduct[]>([])
+  const outletContext = useOutletContext<{ search?: string }>()
+  const search = outletContext?.search ?? ''
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -49,6 +52,15 @@ export default function ProductsPage() {
       setError(err instanceof Error ? err.message : 'Gagal menghapus produk')
     }
   }
+
+  const filtered = products.filter((p) => {
+    const term = search.toLowerCase()
+    return (
+      p.nama_produk?.toLowerCase().includes(term) ||
+      p.deskripsi?.toLowerCase().includes(term) ||
+      String(p.price || '').includes(term)
+    )
+  })
 
   const columns = useMemo(
     () => [
@@ -94,8 +106,8 @@ export default function ProductsPage() {
       />
       <h3>Tabel Produk</h3>
       {error && <p className="form-error">{error}</p>}
-      {loading ? <p>Memuat data...</p> : <DataTable columns={columns} rows={products} zebra />}
-      {!loading && products.length === 0 && <p>Tidak ada data produk.</p>}
+      {loading ? <p>Memuat data...</p> : <DataTable columns={columns} rows={filtered} zebra />}
+      {!loading && filtered.length === 0 && <p>Tidak ada data produk.</p>}
     </div>
   )
 }

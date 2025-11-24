@@ -25,8 +25,6 @@ export default function LoginPage({
   title = 'Login',
   subtitle = 'Masuk untuk mengelola dashboard Eatway',
   submitLabel = 'Login',
-  switchLabel,
-  onSwitch,
 }: LoginPageProps) {
   const [credentials, setCredentials] = useState<LoginCredentials>({ username: '', password: '' })
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -97,11 +95,6 @@ export default function LoginPage({
         <p className="created-by">
           Created by <img src={eatwayText} alt="Eatway" className="created-by__logo" />
         </p>
-        {switchLabel && onSwitch && (
-          <button type="button" className="switch-login" onClick={onSwitch}>
-            {switchLabel}
-          </button>
-        )}
       </div>
     </div>
   )

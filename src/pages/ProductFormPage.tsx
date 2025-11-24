@@ -48,6 +48,17 @@ export default function ProductFormPage({ mode }: ProductFormPageProps) {
     setForm((prev) => ({ ...prev, [key]: value }))
   }
 
+  const handleFile = (file?: File) => {
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = () => {
+      if (typeof reader.result === 'string') {
+        updateField('image_url', reader.result)
+      }
+    }
+    reader.readAsDataURL(file)
+  }
+
   const handleSubmit = async () => {
     setLoading(true)
     setError(null)
@@ -123,7 +134,12 @@ export default function ProductFormPage({ mode }: ProductFormPageProps) {
             disabled={loading}
           />
         </div>
-        <UploadCard title='Gambar Produk' />
+        <UploadCard
+          title='Gambar Produk'
+          onFileSelect={handleFile}
+          highlightLabel='Click here'
+          description='to upload or drop files here'
+        />
       </div>
     </div>
   )

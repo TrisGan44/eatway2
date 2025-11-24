@@ -78,6 +78,17 @@ export default function AccountFormPage({ mode }: AccountFormPageProps) {
     }
   }
 
+  const handleFile = (file?: File) => {
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = () => {
+      if (typeof reader.result === 'string') {
+        updateField('image', reader.result)
+      }
+    }
+    reader.readAsDataURL(file)
+  }
+
   return (
     <div className='page'>
       <PageHeading
@@ -151,7 +162,12 @@ export default function AccountFormPage({ mode }: AccountFormPageProps) {
             disabled={loading}
           />
         </div>
-        <UploadCard />
+        <UploadCard
+          title='Foto Pengguna'
+          onFileSelect={handleFile}
+          highlightLabel='Click here'
+          description='to upload or drop files here'
+        />
       </div>
     </div>
   )

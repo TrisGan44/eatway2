@@ -1,5 +1,5 @@
 ﻿import heroChef from '../assets/images/hero-chef.png'
-import iconAccount from '../assets/images/icon-user.png'
+import iconAccount from '../assets/images/solar_user-linear.svg'
 import iconDashboard from '../assets/images/icon-dashboard.png'
 import iconDelete from '../assets/images/icon-delete.png'
 import iconEdit from '../assets/images/icon-edit.png'
@@ -95,14 +95,15 @@ export const dashboardOverview: OverviewItem[] = [
   {
     id: 'products',
     label: 'Produk',
-    value: '15',
+    value: '0',
     helper: 'Produk Terdaftar',
     icon: iconProduct,
+    tone: 'dark',
   },
   {
     id: 'accounts',
     label: 'Akun',
-    value: '125',
+    value: '0',
     helper: 'Akun Terdaftar',
     icon: iconAccount,
     tone: 'dark',
@@ -110,9 +111,10 @@ export const dashboardOverview: OverviewItem[] = [
   {
     id: 'orders',
     label: 'Pesanan',
-    value: '100',
+    value: '0',
     helper: 'Pesanan Dibuat',
     icon: iconOrder,
+    tone: 'dark',
   },
 ]
 

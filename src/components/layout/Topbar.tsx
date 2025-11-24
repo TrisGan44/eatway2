@@ -4,12 +4,18 @@ import heroChef from '../../assets/images/hero-chef.png'
 interface TopbarProps {
   userName: string
   email: string
+  searchValue?: string
+  onSearchChange?: (value: string) => void
 }
 
-export default function Topbar({ userName, email }: TopbarProps) {
+export default function Topbar({ userName, email, searchValue = '', onSearchChange }: TopbarProps) {
   return (
     <header className="topbar">
-      <SearchInput />
+      <SearchInput
+        placeholder="Cari..."
+        value={searchValue}
+        onChange={(e) => onSearchChange?.(e.target.value)}
+      />
       <div className="topbar__actions">
         <button className="icon-button" aria-label="notifications">
           <svg

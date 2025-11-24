@@ -42,6 +42,17 @@ export default function ReportsPage() {
   const [lowStock, setLowStock] = useState(lowStockMock)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [rangeMonths, setRangeMonths] = useState<1 | 3 | 6>(6)
+  const todayLabel = useMemo(
+    () =>
+      new Date().toLocaleDateString('id-ID', {
+        weekday: 'long',
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+      }),
+    [],
+  )
 
   const load = async () => {
     setLoading(true)
@@ -109,7 +120,7 @@ export default function ReportsPage() {
 
       const points = Array.from(buckets.entries())
         .sort((a, b) => (a[0] > b[0] ? 1 : -1))
-        .slice(-6)
+        .slice(-rangeMonths)
         .map(([key, value]) => {
           const [year, month] = key.split('-').map(Number)
           const label = `${monthLabels[month] ?? 'N/A'} ${String(year).slice(-2)}`
@@ -133,7 +144,7 @@ export default function ReportsPage() {
 
   return (
     <div className='page'>
-      <PageHeading title='Laporan' dateLabel='Monday 23 Okt 2025' />
+      <PageHeading title='Laporan' dateLabel={todayLabel} />
       {error && <p className="form-error">{error}</p>}
       {loading && <p>Memuat data...</p>}
       <div className='stats-grid'>
@@ -145,7 +156,17 @@ export default function ReportsPage() {
         <div className='reports-grid__chart'>
           <div className='section-heading'>
             <h3>Pendapatan</h3>
-            <button className='chip'>6 bulan</button>
+            <div className='chip-group'>
+              {[1, 3, 6].map((num) => (
+                <button
+                  key={num}
+                  className={`chip ${rangeMonths === num ? 'chip--active' : ''}`}
+                  onClick={() => setRangeMonths(num as 1 | 3 | 6)}
+                >
+                  {num} bulan
+                </button>
+              ))}
+            </div>
           </div>
           <RevenueAreaChart data={revenue} />
           <div className='reports-grid__legend'>
